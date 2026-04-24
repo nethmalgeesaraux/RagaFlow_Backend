@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "playlist_song")
@@ -19,4 +22,15 @@ public class PlaylistSong {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "playlist_id", nullable = false)
     private Playlist playlist;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "song_id", nullable = false)
+    private Song song;
+
+    @CreationTimestamp
+    @Column(name = "added_at", nullable = false, updatable = false)
+    private LocalDateTime addedAt;
+
+    @Column(name = "position", nullable = false)
+    private Integer position;
 }
