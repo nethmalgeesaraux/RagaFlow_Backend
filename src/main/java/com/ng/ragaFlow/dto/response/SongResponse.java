@@ -1,5 +1,6 @@
 package com.ng.ragaFlow.dto.response;
 
+import com.ng.ragaFlow.entity.Song;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,20 @@ public class SongResponse {
     private LocalDateTime createdAt;
     private Long appUserId;
     private String appUserName;
+
+    public static SongResponse fromEntity(Song song, String baseUrl) {
+        SongResponse response = new SongResponse();
+        response.setId(song.getId());
+        response.setTitle(song.getTitle());
+        response.setArtist(song.getArtist());
+
+        response.setSongUrl(song.getSongUrl() != null ? baseUrl + song.getSongUrl() : null);
+        response.setImageUrl(song.getImageUrl() != null ? baseUrl + song.getImageUrl() : null);
+
+        response.setCreatedAt(song.getCreatedAt());
+        response.setAppUserId(song.getAppUser().getId());
+        response.setAppUserName(song.getAppUser().getName());
+        return response;
+    }
+
 }
