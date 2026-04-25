@@ -1,5 +1,6 @@
 package com.ng.ragaFlow.dto.response;
 
+import com.ng.ragaFlow.entity.Playlist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,21 @@ public class PlayListResponse {
     private LocalDateTime updatedAt;
     private Long appUserId;
     private String appUserName;
+
+    public static PlayListResponse fromEntity(Playlist playlist, String baseUrl) {
+        PlayListResponse response = new PlayListResponse();
+        response.setId(playlist.getId());
+        response.setName(playlist.getName());
+        response.setDescription(playlist.getDescription());
+        response.setIsPublic(playlist.getIsPublic());
+        response.setImageUrl(
+                playlist.getImageUrl() != null ? baseUrl + playlist.getImageUrl() : null
+        );
+        response.setCreatedAt(playlist.getCreatedAt());
+        response.setUpdatedAt(playlist.getUpdatedAt());
+        response.setAppUserId(playlist.getAppUser().getId());
+        response.setAppUserName(playlist.getAppUser().getName());
+        return response;
+    }
+
 }
