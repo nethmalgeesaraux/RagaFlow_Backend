@@ -1,6 +1,8 @@
 package com.ng.ragaFlow.controller;
 
+import com.ng.ragaFlow.dto.request.LoginUserRequest;
 import com.ng.ragaFlow.dto.request.RegisterUserRequest;
+import com.ng.ragaFlow.dto.response.AppUserResponse;
 import com.ng.ragaFlow.dto.response.MessageResponse;
 import com.ng.ragaFlow.service.AuthService;
 import jakarta.validation.Valid;
@@ -24,5 +26,11 @@ public class AuthController {
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody RegisterUserRequest request) {
         MessageResponse response = authService.registerUser(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/loing")
+    public ResponseEntity<AppUserResponse> loginUser(@Valid @RequestBody LoginUserRequest request){
+        AppUserResponse response = authService.loginUser(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

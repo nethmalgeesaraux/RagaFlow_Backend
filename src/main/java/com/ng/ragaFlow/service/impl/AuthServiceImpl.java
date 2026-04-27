@@ -1,9 +1,12 @@
 package com.ng.ragaFlow.service.impl;
 
+import com.ng.ragaFlow.dto.request.LoginUserRequest;
 import com.ng.ragaFlow.dto.request.RegisterUserRequest;
+import com.ng.ragaFlow.dto.response.AppUserResponse;
 import com.ng.ragaFlow.dto.response.MessageResponse;
 import com.ng.ragaFlow.entity.AppUser;
 import com.ng.ragaFlow.exception.EmailAlreadyExistsException;
+import com.ng.ragaFlow.exception.InvalidCredentialsException;
 import com.ng.ragaFlow.repository.AppUserRepository;
 import com.ng.ragaFlow.service.AuthService;
 import com.ng.ragaFlow.service.EmailService;
@@ -45,6 +48,31 @@ public class AuthServiceImpl implements AuthService {
         return new MessageResponse("Account created successfully. A temporary password has been sent to your email.");
 
     }
+
+    @Override
+    public AppUserResponse loginUser(LoginUserRequest request) {
+        AppUser appUser = appUserRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), appUser.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        String accessToken = jwtUtil.generateAccessToken(
+                appUser.getId(),
+                appUser.getName(),
+                appUser.getEmail(),
+                appUser.getRole()
+        );
+
+        String refreshToken = jwtUtil.generateRefreshToken(appUser.getId(), appUser.getEmail());
+
+        appUser.setRefreshToken(refreshToken);
+        appUserRepository.save(appUser);
+
+        return AppUserResponse.fromEntity(appUser, accessToken, refreshToken);
+    }
+
 
     private String generateTemporaryPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@$#";
